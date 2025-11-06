@@ -7,6 +7,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
@@ -47,10 +48,15 @@ fun RegisterScreen(
     // Estado del ViewModel
     val uiState by viewModel.uiState.collectAsState()
     
+    // Variable para rastrear si ya se intentó registrar en esta sesión
+    var hasAttemptedRegister by remember { mutableStateOf(false) }
+    
     // Si el registro fue exitoso, navegar automáticamente al Home
-    LaunchedEffect(uiState.isLoggedIn) {
-        if (uiState.isLoggedIn && !uiState.isLoading) {
+    LaunchedEffect(uiState.isLoggedIn, uiState.isLoading) {
+        // Solo navegar si se completó un registro exitoso (no estaba cargando y ahora está logueado)
+        if (uiState.isLoggedIn && !uiState.isLoading && hasAttemptedRegister) {
             onRegisterSuccess()
+            hasAttemptedRegister = false // Resetear para evitar navegaciones múltiples
         }
     }
     
@@ -61,7 +67,12 @@ fun RegisterScreen(
                 title = { Text("Registro") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
-                )
+                ),
+                actions = {
+                    IconButton(onClick = onNavigateToHome) {
+                        Icon(Icons.Default.Home, contentDescription = "Ir al Home")
+                    }
+                }
             )
         }
     ) { paddingValues ->
@@ -216,6 +227,7 @@ fun RegisterScreen(
                     
                     // Si todo está bien, registrar y continuar al menú
                     if (isValid) {
+                        hasAttemptedRegister = true
                         viewModel.register(name, email, password)
                     }
                 },

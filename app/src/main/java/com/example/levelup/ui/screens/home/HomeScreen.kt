@@ -20,7 +20,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.AsyncImage
 import com.example.levelup.ui.components.LevelUpLogoSmall
 import com.example.levelup.ui.theme.GamingBackground
@@ -36,10 +35,7 @@ fun HomeScreen(
     onNavigateToRegister: () -> Unit,
     onNavigateToCart: () -> Unit,
     onNavigateToProfile: () -> Unit,
-    onNavigateToSearch: () -> Unit,
-    onNavigateToFilters: () -> Unit,
     onNavigateToCategory: (String) -> Unit,
-    onNavigateToProducts: () -> Unit,
     cartViewModel: CartViewModel
 ) {
     // Estado del carrito

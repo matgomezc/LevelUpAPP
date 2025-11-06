@@ -44,6 +44,7 @@ fun ProfileScreen(
     onNavigateBack: () -> Unit,
     onNavigateToHome: () -> Unit,
     onNavigateToLogin: () -> Unit,
+    onNavigateToRegister: () -> Unit = {},
     onLogout: () -> Unit = {},
     authViewModel: AuthViewModel = viewModel()
 ) {
@@ -198,8 +199,22 @@ fun ProfileScreen(
                     textAlign = TextAlign.Center
                 )
                 Spacer(modifier = Modifier.height(24.dp))
-                Button(onClick = onNavigateToLogin) {
-                    Text("Iniciar Sesión")
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Button(
+                        onClick = onNavigateToLogin,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Iniciar Sesión")
+                    }
+                    OutlinedButton(
+                        onClick = onNavigateToRegister,
+                        modifier = Modifier.weight(1f)
+                    ) {
+                        Text("Registrarse")
+                    }
                 }
             }
         } else {

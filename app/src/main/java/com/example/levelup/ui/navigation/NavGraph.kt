@@ -14,8 +14,6 @@ import com.example.levelup.ui.screens.products.ProductCatalogScreen
 import com.example.levelup.ui.screens.home.HomeScreen
 import com.example.levelup.ui.screens.cart.CartScreen
 import com.example.levelup.ui.screens.profile.ProfileScreen
-import com.example.levelup.ui.screens.search.SearchScreen
-import com.example.levelup.ui.screens.filters.FiltersScreen
 import com.example.levelup.ui.viewmodel.CartViewModel
 
 sealed class Screen(val route: String) {
@@ -27,8 +25,7 @@ sealed class Screen(val route: String) {
     }
     object Cart : Screen("cart")
     object Profile : Screen("profile")
-    object Search : Screen("search")
-    object Filters : Screen("filters")
+
 }
 
 @Composable
@@ -51,10 +48,14 @@ fun NavGraph(navController: NavHostController, startDestination: String = Screen
         composable(Screen.Home.route) {
             HomeScreen(
                 onNavigateToLogin = {
-                    navController.navigate(Screen.Login.route)
+                    navController.navigate(Screen.Login.route) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToRegister = {
-                    navController.navigate(Screen.Register.route)
+                    navController.navigate(Screen.Register.route) {
+                        launchSingleTop = true
+                    }
                 },
                 onNavigateToCart = {
                     navController.navigate(Screen.Cart.route)
@@ -62,17 +63,8 @@ fun NavGraph(navController: NavHostController, startDestination: String = Screen
                 onNavigateToProfile = {
                     navController.navigate(Screen.Profile.route)
                 },
-                onNavigateToSearch = {
-                    navController.navigate(Screen.Search.route)
-                },
-                onNavigateToFilters = {
-                    navController.navigate(Screen.Filters.route)
-                },
                 onNavigateToCategory = { category ->
                     navController.navigate(Screen.ProductCatalog.createRoute(category))
-                },
-                onNavigateToProducts = {
-                    navController.navigate(Screen.ProductCatalog.createRoute(null))
                 },
                 cartViewModel = cartViewModel
             )
@@ -167,32 +159,18 @@ fun NavGraph(navController: NavHostController, startDestination: String = Screen
                 },
                 onNavigateToLogin = {
                     navController.navigate(Screen.Login.route) {
-                        popUpTo(Screen.Home.route) { inclusive = false }
+                        popUpTo(Screen.Profile.route) { inclusive = false }
+                    }
+                },
+                onNavigateToRegister = {
+                    navController.navigate(Screen.Register.route) {
+                        popUpTo(Screen.Profile.route) { inclusive = false }
                     }
                 },
                 onLogout = {
                     navController.navigate(Screen.Home.route) {
                         popUpTo(Screen.Profile.route) { inclusive = true }
                     }
-                }
-            )
-        }
-        
-        composable(Screen.Search.route) {
-            SearchScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
-                },
-                onNavigateToProduct = { category ->
-                    navController.navigate(Screen.ProductCatalog.createRoute(category))
-                }
-            )
-        }
-        
-        composable(Screen.Filters.route) {
-            FiltersScreen(
-                onNavigateBack = {
-                    navController.popBackStack()
                 }
             )
         }

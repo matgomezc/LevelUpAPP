@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Email
+import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -36,10 +37,15 @@ fun LoginScreen(
     // Obtener el estado del ViewModel
     val uiState by viewModel.uiState.collectAsState()
     
+    // Variable para rastrear si ya se intentó hacer login en esta sesión
+    var hasAttemptedLogin by remember { mutableStateOf(false) }
+    
     // Si el login fue exitoso, navegar automáticamente al Home
-    LaunchedEffect(uiState.isLoggedIn) {
-        if (uiState.isLoggedIn) {
+    LaunchedEffect(uiState.isLoggedIn, uiState.isLoading) {
+        // Solo navegar si se completó un login exitoso (no estaba cargando y ahora está logueado)
+        if (uiState.isLoggedIn && !uiState.isLoading && hasAttemptedLogin) {
             onLoginSuccess()
+            hasAttemptedLogin = false // Resetear para evitar navegaciones múltiples
         }
     }
     
@@ -50,7 +56,12 @@ fun LoginScreen(
                 title = { Text("Iniciar Sesión") },
                 colors = TopAppBarDefaults.topAppBarColors(
                     containerColor = MaterialTheme.colorScheme.surface
-                )
+                ),
+                actions = {
+                    IconButton(onClick = onNavigateToHome) {
+                        Icon(Icons.Default.Home, contentDescription = "Ir al Home")
+                    }
+                }
             )
         }
     ) { paddingValues ->
@@ -140,6 +151,7 @@ fun LoginScreen(
                     
                     // Si todo está bien, hacer login
                     if (isValid) {
+                        hasAttemptedLogin = true
                         viewModel.login(email, password)
                     }
                 },

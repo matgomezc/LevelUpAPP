@@ -15,8 +15,7 @@ import kotlinx.coroutines.launch
 data class ProductUiState(
     val products: List<Product> = emptyList(),
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val selectedCategory: String? = null
+    val errorMessage: String? = null
 )
 
 // ViewModel para manejar los productos
@@ -63,7 +62,7 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
     // Cargar productos por categoría
     fun loadProductsByCategory(category: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isLoading = true, selectedCategory = category)
+            _uiState.value = _uiState.value.copy(isLoading = true)
             try {
                 val products = productRepository.getProductsByCategory(category)
                 _uiState.value = _uiState.value.copy(
@@ -80,50 +79,5 @@ class ProductViewModel(application: Application) : AndroidViewModel(application)
         }
     }
     
-    // Agregar un nuevo producto
-    fun addProduct(
-        name: String,
-        price: Double,
-        category: String,
-        description: String = "",
-        stock: Int = 0
-    ) {
-        viewModelScope.launch {
-            try {
-                val product = Product(
-                    name = name,
-                    price = price,
-                    category = category,
-                    description = description,
-                    stock = stock
-                )
-                productRepository.insertProduct(product)
-                loadProducts() // Recargar productos
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Error al agregar producto: ${e.message}"
-                )
-            }
-        }
-    }
-    
-    // Eliminar un producto
-    fun deleteProduct(productId: Long) {
-        viewModelScope.launch {
-            try {
-                productRepository.deleteProduct(productId)
-                loadProducts()
-            } catch (e: Exception) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = "Error al eliminar producto: ${e.message}"
-                )
-            }
-        }
-    }
-    
-    // Limpiar filtro de categoría
-    fun clearCategoryFilter() {
-        loadProducts()
-    }
 }
 
