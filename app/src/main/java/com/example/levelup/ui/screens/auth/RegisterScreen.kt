@@ -29,7 +29,7 @@ fun RegisterScreen(
     onRegisterSuccess: () -> Unit,
     onNavigateToLogin: () -> Unit,
     onNavigateToHome: () -> Unit = {},
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
 ) {
     val scrollState = rememberScrollState()
     

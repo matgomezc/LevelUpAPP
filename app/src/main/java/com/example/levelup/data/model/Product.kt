@@ -14,6 +14,6 @@ data class Product(
     val description: String = "", // Descripción opcional
     val imageUrl: String = "", // URL de imagen (opcional)
     val stock: Int = 0, // Cantidad en stock
-    val createdAt: Long = System.currentTimeMillis()
+    val createdAt: Long = 0L // Se establecerá al crear el producto
 )
 

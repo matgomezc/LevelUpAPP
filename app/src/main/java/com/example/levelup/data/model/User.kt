@@ -12,6 +12,6 @@ data class User(
     val password: String, // Nota: en producción debería estar hasheado, pero por ahora así
     val name: String,
     val profileImagePath: String? = null, // Ruta de la imagen de perfil
-    val createdAt: Long = System.currentTimeMillis() // Fecha de creación
+    val createdAt: Long = 0L // Se establecerá al crear el usuario
 )
 

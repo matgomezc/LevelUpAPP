@@ -81,9 +81,11 @@ object ProductSeeder {
         scope.launch {
             val existingProducts = repository.getAllProducts()
             if (existingProducts.isEmpty()) {
-                // Agregar todos los productos iniciales
+                // Agregar todos los productos iniciales con timestamp
+                val currentTime = System.currentTimeMillis()
                 initialProducts.forEach { product ->
-                    repository.insertProduct(product)
+                    val productWithTimestamp = product.copy(createdAt = currentTime)
+                    repository.insertProduct(productWithTimestamp)
                 }
             }
         }

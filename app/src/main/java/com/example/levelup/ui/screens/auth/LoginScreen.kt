@@ -26,7 +26,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit,
     onNavigateToRegister: () -> Unit,
     onNavigateToHome: () -> Unit = {},
-    viewModel: AuthViewModel = viewModel()
+    viewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
 ) {
     // Variables para los campos del formulario
     var email by remember { mutableStateOf("") }
@@ -191,4 +191,3 @@ fun LoginScreen(
         }
     }
 }
-

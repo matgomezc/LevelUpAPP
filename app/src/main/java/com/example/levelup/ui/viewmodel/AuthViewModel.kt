@@ -2,7 +2,12 @@ package com.example.levelup.ui.viewmodel
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.example.levelup.data.database.LevelUpDatabase
 import com.example.levelup.data.local.DataStoreManager
 import com.example.levelup.data.model.User
 import com.example.levelup.data.repository.UserRepository
@@ -21,23 +26,20 @@ data class AuthUiState(
 )
 
 // ViewModel para manejar el login y registro
-class AuthViewModel(application: Application) : AndroidViewModel(application) {
-    
-    // Repositorio para manejar usuarios
-    private val userRepository: UserRepository
-    // Para guardar si el usuario está logueado
+class AuthViewModel(
+    application: Application,
+    private val userRepository: UserRepository,
     private val dataStoreManager: DataStoreManager
+) : AndroidViewModel(application) {
+    
+    // Constructor secundario para mantener compatibilidad (si fuera necesario) o para pruebas
+    // Pero el Factory es la mejor forma
     
     // Estado actual de la UI
     private val _uiState = MutableStateFlow(AuthUiState())
     val uiState: StateFlow<AuthUiState> = _uiState.asStateFlow()
     
     init {
-        // Inicializar la base de datos
-        val database = com.example.levelup.data.database.LevelUpDatabase.getDatabase(application)
-        userRepository = UserRepository(database.userDao())
-        dataStoreManager = DataStoreManager(application)
-        
         // Ver si ya hay alguien logueado
         viewModelScope.launch {
             val isLoggedIn = dataStoreManager.isLoggedIn.first()
@@ -50,6 +52,18 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                         currentUser = user
                     )
                 }
+            }
+        }
+    }
+    
+    companion object {
+        val Factory: ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val application = (this[APPLICATION_KEY] as Application)
+                val database = LevelUpDatabase.getDatabase(application)
+                val repository = UserRepository(database.userDao())
+                val dataStore = DataStoreManager(application)
+                AuthViewModel(application, repository, dataStore)
             }
         }
     }
@@ -115,7 +129,8 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                 val user = User(
                     email = email.trim(),
                     password = password, // En producción debería estar hasheado
-                    name = name.trim()
+                    name = name.trim(),
+                    createdAt = System.currentTimeMillis()
                 )
                 
                 // Insertar el usuario
@@ -257,4 +272,3 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         }
     }
 }
-

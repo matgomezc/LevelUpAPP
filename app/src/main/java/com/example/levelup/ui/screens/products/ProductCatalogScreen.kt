@@ -10,6 +10,7 @@ import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.ExitToApp
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -43,8 +44,8 @@ fun ProductCatalogScreen(
     onNavigateBack: () -> Unit = {},
     onNavigateToHome: () -> Unit = {},
     onLogout: () -> Unit = {},
-    productViewModel: ProductViewModel = viewModel(),
-    authViewModel: AuthViewModel = viewModel(),
+    productViewModel: ProductViewModel = viewModel(factory = ProductViewModel.Factory),
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory),
     cartViewModel: com.example.levelup.ui.viewmodel.CartViewModel
 ) {
     val uiState by productViewModel.uiState.collectAsState()
@@ -126,6 +127,10 @@ fun ProductCatalogScreen(
                 actions = {
                     IconButton(onClick = onNavigateToHome) {
                         Icon(Icons.Default.Home, contentDescription = "Ir al Home")
+                    }
+                    // Botón de sincronización con API
+                    IconButton(onClick = { productViewModel.syncWithApi() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "Sincronizar con API")
                     }
                     // Botón de ubicación (IL2.4 - Recursos nativos)
                     IconButton(onClick = { getLocation() }) {
@@ -354,4 +359,3 @@ fun ProductCard(
         }
     }
 }
-

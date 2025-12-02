@@ -46,7 +46,7 @@ fun ProfileScreen(
     onNavigateToLogin: () -> Unit,
     onNavigateToRegister: () -> Unit = {},
     onLogout: () -> Unit = {},
-    authViewModel: AuthViewModel = viewModel()
+    authViewModel: AuthViewModel = viewModel(factory = AuthViewModel.Factory)
 ) {
     val scrollState = rememberScrollState()
     val uiState by authViewModel.uiState.collectAsState()
